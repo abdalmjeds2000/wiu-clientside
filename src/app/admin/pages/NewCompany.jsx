@@ -5,7 +5,7 @@ import FilesUploader from '../../../components/FilesUploader';
 
 
 const NewCompany = () => {
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     console.log('Success:', values);
   }
   const onFinishFailed = _ => message.error('الرجاء التأكد من صحة البيانات المدخلة');

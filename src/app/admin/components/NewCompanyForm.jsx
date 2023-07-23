@@ -8,7 +8,7 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
   const [industryLicenseFiles, setIndustryLicenseFiles] = React.useState([]);
   const [municipalityLicenseFiles, setMunicipalityLicenseFiles] = React.useState([]);
 
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     const data = {
       ...values,
       commercial_register_files: commercialRegisterFiles,
@@ -23,7 +23,13 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
       return;
     }
 
-    onFinish(data);
+    await onFinish(data);
+
+    form.resetFields();
+    setCommercialRegisterFiles([]);
+    setIndustryLicenseFiles([]);
+    setMunicipalityLicenseFiles([]);
+    message.success('تم إضافة الشركة بنجاح');
   }
   return (
     <Form form={form} layout='vertical' onFinish={handleSubmit} onFinishFailed={onFinishFailed}>

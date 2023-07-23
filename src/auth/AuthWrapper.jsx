@@ -31,7 +31,7 @@ export const AuthWrapper = () => {
       setAuthToken(token);
       // message.success(`تم تسجيل الدخول بنجاح`, 2);
       //  message position left-bottom
-      message.success({ content: 'تم تسجيل الدخول بنجاح', duration: 2 , style: { marginTop: '50vh', left: '50%' } });
+      message.success({ content: 'تم تسجيل الدخول بنجاح', duration: 2 });
       return response;
     } catch (error) {
       return error;

@@ -30,7 +30,7 @@ const Login = () => {
           <Typography.Text>Wood Industry Union</Typography.Text>
         </div>
         <h1 className='mb-6 text-xl'>تسجيل الدخول</h1>
-        <Form name="app-login" layout='vertical' onFinish={doLogin} onFinishFailed={() => message.error('Please, fill all required fields.')}>
+        <Form name="app-login" layout='vertical' onFinish={doLogin} onFinishFailed={() => message.error('خطأ في الإدخال')}>
           <Form.Item name="username" label="إسم المستخدم" rules={[{ required: true, message: '' }]}>
             <Input placeholder="أكتب إسم المستخدم" size='large' />
           </Form.Item>
