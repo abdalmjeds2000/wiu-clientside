@@ -7,7 +7,7 @@ import { BsBuildingFillAdd } from 'react-icons/bs';
 const Card = ({ title, desc, icon: Icon, to, color }) => {
   return (
     <Link to={to}>
-      <div className="flex flex-col items-center justify-center gap-4 p-4 bg-neutral-100 relative shadow-sm hover:drop-shadow-lg rounded-md">
+      <div className="flex flex-col items-center justify-center gap-4 p-4 bg-white relative shadow-sm hover:drop-shadow-lg rounded-md">
         <div style={{ backgroundColor: color }} className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
           <Icon style={{ fontSize: 30, color: '#fff' }} />
         </div>
