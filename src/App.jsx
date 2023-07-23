@@ -9,13 +9,14 @@ import { MdOutlineColorLens } from 'react-icons/md';
 const colors = [
   '#F31559',
   '#35A29F',
-  '#0079FF',
+  '#3399FF',
   '#6528F7',
   '#FF8551',
+  '#9988FF',
   '#FFC26F',
 ]; 
 const App = () => {
-  const [appColor, setAppColor] = useState(colors[2]);
+  const [appColor, setAppColor] = useState("#8D7B68");
 
   return (
     <ConfigProvider

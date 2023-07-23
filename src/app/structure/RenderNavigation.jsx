@@ -35,7 +35,7 @@ export const RenderMenu = () => {
     <div className="h-full flex items-center justify-between">
       <div className="flex gap-8 items-center">
         <span className="text-xl font-bold">
-          <Link to={user.isAuthenticated ? '/dashboard' : '/login'}>
+          <Link style={{ color: "#8D7B68" }} to={user.isAuthenticated ? '/dashboard' : '/login'}>
             WIU
           </Link>
         </span>

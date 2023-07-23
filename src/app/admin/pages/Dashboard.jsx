@@ -6,13 +6,15 @@ import { BsBuildingFillAdd } from 'react-icons/bs';
 
 const Card = ({ title, desc, icon: Icon, to, color }) => {
   return (
-    <Link to={to} style={{ backgroundColor: '#fff' }} className="flex flex-col items-center justify-center gap-4 p-4 bg-white relative hover:-top-1 shadow-sm hover:drop-shadow-md rounded-md transition-all">
-      <div style={{ backgroundColor: color }} className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
-        <Icon style={{ fontSize: 24, color: '#fff' }} />
-      </div>
-      <div className="flex flex-col items-center justify-center">
-        <Typography.Title level={5}>{title}</Typography.Title>
-        <Typography.Text>{desc}</Typography.Text>
+    <Link to={to}>
+      <div className="flex flex-col items-center justify-center gap-4 p-4 bg-neutral-100 relative shadow-sm hover:drop-shadow-lg rounded-md">
+        <div style={{ backgroundColor: color }} className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full">
+          <Icon style={{ fontSize: 30, color: '#fff' }} />
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <Typography.Title level={5}>{title}</Typography.Title>
+          <Typography.Text>{desc}</Typography.Text>
+        </div>
       </div>
     </Link>
   )
@@ -31,7 +33,7 @@ const Dashboard = () => {
             // desc="إضافة شركة"
             icon={BsBuildingFillAdd}
             to="/new-company"
-            color="#1890ff"
+            color="#8D7B68"
           />
           
         </div>
