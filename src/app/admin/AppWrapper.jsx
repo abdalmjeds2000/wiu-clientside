@@ -14,7 +14,7 @@ export const AppData = () => useContext(AppContext);
 
 export const AppWrapper = () => {
   const { user, logout } = AuthData();
-  const [collapsed, setCollapsed] = useState(window.innerWidth < 768);
+  const [collapsed, setCollapsed] = useState(true);
   const { token: { colorBgContainer } } = theme.useToken();
 
   const contextObj = {};
