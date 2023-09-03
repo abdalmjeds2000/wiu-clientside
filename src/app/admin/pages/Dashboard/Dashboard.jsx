@@ -193,7 +193,8 @@ const Dashboard = () => {
           {
             numbers.data.map(({ Count, label, description, color }, index) =>
               <Col xs={24} md={12} lg={8} key={index} className='h-full'>
-                <Card bordered={false} className={`border border-gray-200 border-b-4 border-b-${color} hover:border-${color}`}>
+                {/* <Card bordered={false} className={`border border-gray-200 border-b-4 border-b-${color} hover:border-${color}`}> */}
+                <Card bordered={false} className={`border border-gray-200 border-b-4 border-b-sky-500 hover:border-sky-border-b-sky-500`}>
                   <Typography.Text type='secondary'>{label}</Typography.Text>
                   <Typography.Title style={{margin:0}} level={1}>{Count}</Typography.Title>
                   <Typography.Text type='secondary'>{description || " - "}</Typography.Text>
