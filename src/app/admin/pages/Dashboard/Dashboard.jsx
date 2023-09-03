@@ -2,7 +2,7 @@ import React from 'react';
 import { Badge, Button, Card, Col, Descriptions, Input, List, Popover, Radio, Row, Select, Table, Tag, Tooltip, Typography, message } from 'antd';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { AppData } from '../../AppWrapper';
+import { AuthData } from '../../../../auth/AuthWrapper';
 
 const ServiceCard = ({ title, desc, icon: Icon, to, color }) => {
   return (
@@ -39,7 +39,7 @@ const initialTableParams = {
   sort: { active: false, field: null, order: null }
 };
 const Dashboard = () => {
-  const { apiUrl } = AppData();
+  const { apiUrl } = AuthData();
   const [numbers, setNumbers] = React.useState({ data:[], loading: true });
   const [companiesData, setCompaniesData] = React.useState(initialTableParams);
 
