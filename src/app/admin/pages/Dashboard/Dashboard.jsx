@@ -36,7 +36,7 @@ const initialTableParams = {
   search: '',
   draw: 1,
   fieldsAbleToSort: [],
-  sort: { active: false, field: null, order: null }
+  sort: { draw: 1, active: false, field: null, order: null }
 };
 const Dashboard = () => {
   const { apiUrl } = AuthData();
@@ -88,7 +88,7 @@ const Dashboard = () => {
     return () => {
       abortController.abort();
     };
-  }, [companiesData.tableParams.pagination.current, companiesData.tableParams.pagination.pageSize, companiesData.search, companiesData.sort.active]);
+  }, [companiesData.tableParams.pagination.current, companiesData.tableParams.pagination.pageSize, companiesData.search, companiesData.sort.active, companiesData.sort.draw]);
 
   const columns = [
     {
@@ -134,7 +134,7 @@ const Dashboard = () => {
       message.error('يجب إختيار حقل للترتيب');
       return;
     }
-    setCompaniesData(prev => ({ ...prev, tableParams: { ...prev.tableParams, pagination: { ...prev.tableParams.pagination, current: 1 } }, sort: { ...prev.sort, active: true } }));
+    setCompaniesData(prev => ({ ...prev, tableParams: { ...prev.tableParams, pagination: { ...prev.tableParams.pagination, current: 1 } }, sort: { ...prev.sort, active: true, draw: prev.sort.draw+1 } }));
   };
 
   const tableControles = (
