@@ -7,16 +7,17 @@ import 'antd/dist/reset.css';
 import { useState } from 'react';
 import { MdOutlineColorLens } from 'react-icons/md';
 const colors = [
+  "#8D7B68",
+  '#6528F7',
   '#F31559',
   '#35A29F',
   '#3399FF',
-  '#6528F7',
   '#FF8551',
   '#9988FF',
   '#FFC26F',
 ]; 
 const App = () => {
-  const [appColor, setAppColor] = useState("#8D7B68");
+  const [appColor, setAppColor] = useState(colors[0]);
 
   return (
     <ConfigProvider
@@ -33,7 +34,7 @@ const App = () => {
         <div className='app-container bg-gray-100'>
           <AuthWrapper />
         </div>
-        {/* <AppColorPicker setAppColor={setAppColor} /> */}
+        <AppColorPicker setAppColor={setAppColor} />
       </BrowserRouter>
     </StyleProvider>
   </ConfigProvider>

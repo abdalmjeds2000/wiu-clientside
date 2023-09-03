@@ -12,8 +12,10 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
   const [industryLicenseFiles, setIndustryLicenseFiles] = React.useState([]);
   const [municipalityLicenseFiles, setMunicipalityLicenseFiles] = React.useState([]);
   const [current, setCurrent] = React.useState(0);
-
+  const [loading, setLoading] = React.useState(false);
+  
   const handleSubmit = async (values) => {
+    setLoading(true);
     const data = {
       ...values,
       commercial_register_files: commercialRegisterFiles,
@@ -29,13 +31,18 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
       return;
     }
 
-    await onFinish(data);
-
-    form.resetFields();
-    setCommercialRegisterFiles([]);
-    setIndustryLicenseFiles([]);
-    setMunicipalityLicenseFiles([]);
-    message.success('تم إضافة الشركة بنجاح');
+    try {
+      await onFinish(data);
+      form.resetFields();
+      setCommercialRegisterFiles([]);
+      setIndustryLicenseFiles([]);
+      setMunicipalityLicenseFiles([]);
+      message.success('تم إضافة الشركة بنجاح');
+      setCurrent(0);
+      setLoading(false);
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   const steps = [
@@ -57,19 +64,16 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
               </Form.Item>
               <Form.Item name="type" label="النوع" rules={[{ required: true, message: "" }]}>
                 <Select placeholder="اختر النوع" allowClear size='large'>
-                  <Select.Option value="individual">فردية</Select.Option>
-                  <Select.Option value="normal">عادية</Select.Option>
-                  <Select.Option value="shareholding">مساهمة</Select.Option>
-                  <Select.Option value="solidarity">تضامن</Select.Option>
-                  <Select.Option value="limited">ذات مسؤولية محدودة</Select.Option>
+                  <Select.Option value="فردية">فردية</Select.Option>
+                  <Select.Option value="عادية">عادية</Select.Option>
+                  <Select.Option value="مساهمة">مساهمة</Select.Option>
+                  <Select.Option value="تضامن">تضامن</Select.Option>
+                  <Select.Option value="ذات مسؤولية محدودة">ذات مسؤولية محدودة</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item name="membership_number" label="رقم العضوية" rules={[{ required: true, message: "" }]}>
                 <Input placeholder="أدخل رقم العضوية" size='large' />
               </Form.Item>
-              {/* <Form.Item name="company_number" label="رقم الشركة" rules={[{ required: true, message: "" }]}>
-                <Input placeholder="أدخل رقم الشركة" size='large' />
-              </Form.Item> */}
               <Form.Item name="authorized_name" label="اسم المفوض" rules={[{ required: true, message: "" }]}>
                 <Input placeholder="أدخل اسم المفوض" size='large' />
               </Form.Item>
@@ -129,8 +133,8 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
               </div>
             </Col>
           </Row>
-          <Form.Item name="status" label="الحالة" initialValue={false} rules={[{ required: true, message: "" }]}>
-            <Switch size='default' checkedChildren="نشط" unCheckedChildren="غير نشط" />
+          <Form.Item name="status" label="الحالة" initialValue={true} rules={[{ required: true, message: "" }]}>
+            <Switch size='default' checkedChildren="نشط" unCheckedChildren="غير نشط" defaultChecked />
           </Form.Item>
         </React.Fragment>
       ),
@@ -298,11 +302,7 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
   }));
   
   return (
-    // <Form form={form} layout='vertical' onFinish={handleSubmit} onFinishFailed={onFinishFailed}>
-    
-    // </Form>
-
-    <Form form={form} onFinish={handleSubmit} layout="vertical" size='large' onFinishFailed={onFinishFailed} onValuesChange={(_, vs) => console.log(vs)}>
+    <Form form={form} disabled={loading} onFinish={handleSubmit} layout="vertical" size='large' onFinishFailed={onFinishFailed} onValuesChange={(_, vs) => console.log(vs)}>
       <Steps current={current} items={items} onChange={setCurrent} style={{marginBottom: 25}} />
       <div>
         {
@@ -321,7 +321,7 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
           </Button>
         )}
         {current === steps.length - 1 && (
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             إنهاء وحفظ
           </Button>
         )}

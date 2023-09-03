@@ -44,11 +44,6 @@ const NewCompany = () => {
     } catch (error) {
       message.error('حدث خطأ أثناء إضافة العمال');
     }
-
-
-    console.log('companyData', companyData);
-    console.log('members', members);
-    console.log('workers', workers);
   }
   const onFinishFailed = _ => message.error('الرجاء التأكد من صحة البيانات المدخلة');
   return (
