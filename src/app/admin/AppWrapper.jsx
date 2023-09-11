@@ -29,14 +29,14 @@ export const AppWrapper = () => {
           style={{ display: !collapsed ? 'none' : 'block' , position: 'fixed', borderRadius: '99px', fontSize: '16px', width: 35, height: 35, right: 2, top: 10, zIndex: 9999 }}
         />}
         {user.isAuthenticated && 
-          <Sider trigger={null} theme="dark" collapsible collapsed={collapsed} className={`${!collapsed ? 'max-md:block' : 'max-md:hidden'}`} style={{ height: '100vh', position: 'sticky', top: 0, backgroundColor: "#211e1b" }}>
+          <Sider trigger={null} theme="dark" collapsible collapsed={collapsed} className={`${!collapsed ? 'max-md:block' : 'max-md:hidden'}`} style={{ height: '100vh', position: 'sticky', top: 0, backgroundColor: "#40513B" }}>
             <Button
               type="primary"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               style={{ fontSize: '16px', width: '100%', height: 64, borderRadius: 0, marginBottom: 24, background: '#eee', color: '#000' }}
             />
-            <Menu theme="dark" defaultSelectedKeys={[location.pathname]} style={{ backgroundColor: "#211e1b" }}>
+            <Menu theme="dark" defaultSelectedKeys={[location.pathname]} style={{ backgroundColor: "#40513B" }}>
               {
                 nav.filter(r => r.isMenu)
                 .map(({ title, path, icon }, index) =>

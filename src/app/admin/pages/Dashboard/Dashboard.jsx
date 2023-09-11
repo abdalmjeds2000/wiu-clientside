@@ -3,6 +3,9 @@ import { Badge, Button, Card, Col, Descriptions, Input, List, Popover, Radio, Ro
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthData } from '../../../../auth/AuthWrapper';
+import { CSVLink } from "react-csv";
+import { FileIcon, defaultStyles } from 'react-file-icon';
+
 
 const ServiceCard = ({ title, desc, icon: Icon, to, color }) => {
   return (
@@ -30,6 +33,7 @@ const initialTableParams = {
       pageSize: 10,
       total: 0,
       position: ['none', 'bottomCenter'],
+      showSizeChanger: true,
       pageSizeOptions: [10, 20, 30, 40, 50, 100]
     },
   },
@@ -42,6 +46,8 @@ const Dashboard = () => {
   const { apiUrl } = AuthData();
   const [numbers, setNumbers] = React.useState({ data:[], loading: true });
   const [companiesData, setCompaniesData] = React.useState(initialTableParams);
+  const [exportStats, setExportStats] = React.useState({ data: [], loading: false });
+
 
   const getNumbers = async () => {
     try {
@@ -56,7 +62,7 @@ const Dashboard = () => {
     const takeItems = companiesData.tableParams.pagination.pageSize;
     try {
       setCompaniesData(prev => ({ ...prev, loading: true }));
-      await axios.get(`${apiUrl}/GetCompanies?draw=${companiesData.draw}&start=${skipItems}&length=${takeItems}&search=${companiesData.search||""}&sort=${companiesData.sort.field||""}&order=${companiesData.sort.order||""}`, { signal: signal })
+      await axios.get(`${apiUrl}/GetCompanies?draw=${companiesData.draw}&start=${skipItems}&length=${takeItems}&search=${companiesData.search||""}&sort=${companiesData.sort.field||"guid"}&order=${companiesData.sort.order||"desc"}`, { signal: signal })
         .then((res) => {
           setCompaniesData(prev => ({
             ...prev,
@@ -94,23 +100,38 @@ const Dashboard = () => {
     {
       title: '#المعرّف',
       dataIndex: 'guid',
-      width: '15%',
+      width: '10%',
       render: val => <div style={{direction:"ltr", textAlign:"center"}}><Tag color="default">{val}</Tag></div>
     },
     {
       title: 'إسم الشركة',
       dataIndex: 'name',
-      width: '60%',
+      width: '35%',
+    },
+    {
+      title: 'المفوض',
+      width: '15%',
+      render: (record) => record.members?.filter((item) => item.is_responsible_member).map((item) => item.full_name).join(", ")
+    },
+    {
+      title: 'المشغل المرخص',
+      dataIndex: 'license_number',
+      width: '12%',
+    },
+    {
+      title: 'الهاتف',
+      dataIndex: 'phone',
+      width: '12%',
     },
     {
       title: 'الحالة',
       dataIndex: 'status',
-      width: '15%',
+      width: '8%',
       render: val =><div className='text-center'>{val ? <Tag color='success'>فعّالة</Tag> : <Tag color='error'>غير فعّالة</Tag>}</div>
     },
     {
       title: 'الإجراء',
-      width: '10%',
+      width: '8%',
       render: () => <Tooltip title="Coming Soon"><Button type='link'>تعديل</Button></Tooltip>,
     },
   ];
@@ -125,6 +146,32 @@ const Dashboard = () => {
     }));
   };
 
+  const handleExport = async () => {
+    try {
+      setExportStats(prev => ({ ...prev, loading: true }));
+      const skipItems = companiesData.tableParams.pagination.pageSize * (companiesData.tableParams.pagination.current - 1);
+      const takeItems = companiesData.tableParams.pagination.pageSize;
+      const response = await axios.get(`${apiUrl}/GetCompanies?start=${skipItems}&length=${takeItems}&search=${companiesData.search||""}&sort=${companiesData.sort.field||""}&order=${companiesData.sort.order||""}`);
+      const data = response.data.data.map((item) => ({
+        "المعرف": item.guid,
+        "إسم الشركة": item.name,
+        "المفوض": item.members?.filter((item) => item.is_responsible_member).map((item) => item.full_name).join(", "),
+        "المشغل المرخص": item.license_number,
+        "الهاتف": item.phone,
+        "الحالة": item.status ? "فعّالة" : "غير فعّالة",
+        "العنوان": item.address,
+        "السمة التجارية": item.brand,
+        "المحافضة": item.governorate,
+        "العضوية": item.membership == "1" ? "هيئة عامة أساسية" : item.membership == "2" ? "مجلس إدارة" : item.membership == "3" ? "عضوية فخرية" : "-",
+        "النوع": item.type,
+        "الأعضاء": item.members?.map((item) => item.full_name).join(", "),
+        "العمال": item.workers?.map((item) => item.full_name).join(", "),
+      }));
+      setExportStats(prev => ({ ...prev, data: data, loading: false }));
+    } catch (err) {
+      message.error('حدث خطأ أثناء تحميل البيانات');
+    }
+  };
 
   const onSearch = (value) => {
     setCompaniesData(prev => ({ ...prev, search: value, tableParams: { ...prev.tableParams, pagination: { ...prev.tableParams.pagination, current: 1 } } }));
@@ -178,9 +225,25 @@ const Dashboard = () => {
             ترتيب حسب
           </Button>
         </Popover>
-        <Tooltip title="Coming Soon">
-          <Button type='primary' className='mr-2' disabled>تصدير</Button>
-        </Tooltip>
+        <Popover
+          content={(
+            <div className='flex flex-col gap-2'>
+              <Button type='primary' className='w-full' loading={exportStats.loading} onClick={handleExport}>
+                تصدير كـ CSV
+              </Button>
+              {
+                !exportStats.loading && exportStats.data.length > 0 && <CSVLink data={exportStats.data} filename={"companies.csv"} className="w-full">
+                  <Button type='link' >تنزيل</Button>
+                </CSVLink>
+              }
+            </div>
+          )}
+          title="تصدير البيانات"
+          trigger="click"
+          placement="bottomRight"
+        >
+          <Button type="dashed" className='mr-2'>تصدير</Button>
+        </Popover>
       </div>
     </div>
   );
@@ -194,7 +257,7 @@ const Dashboard = () => {
             numbers.data.map(({ Count, label, description, color }, index) =>
               <Col xs={24} md={12} lg={8} key={index} className='h-full'>
                 {/* <Card bordered={false} className={`border border-gray-200 border-b-4 border-b-${color} hover:border-${color}`}> */}
-                <Card bordered={false} className={`border border-gray-200 border-b-4 border-b-sky-500 hover:border-sky-border-b-sky-500`}>
+                <Card bordered={false} className={`border border-gray-200 border-b-4 border-b-primary hover:border-sky-border-b-sky-500`}>
                   <Typography.Text type='secondary'>{label}</Typography.Text>
                   <Typography.Title style={{margin:0}} level={1}>{Count}</Typography.Title>
                   <Typography.Text type='secondary'>{description || " - "}</Typography.Text>
@@ -212,21 +275,6 @@ const Dashboard = () => {
         </Row>
       </div>
 
-
-
-      {/* <div className='mb-8'>
-        <Typography.Title level={3}>قائمة الخدمات</Typography.Title>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <ServiceCard
-            title="إضافة شركة"
-            icon={BsBuildingFillAdd}
-            to="/new-company"
-            color="teal-500"
-          />
-        </div>
-      </div> */}
-
-
       <div>
         <Typography.Title level={3}>معلومات الشركات</Typography.Title>
         <div className='overflow-x-auto'>
@@ -237,7 +285,6 @@ const Dashboard = () => {
             loading={companiesData.loading}
             rowKey={(record) => record.guid}
             bordered
-            size='large'
             onChange={handleTableChange}
             title={() => tableControles}
             expandable={{
@@ -251,32 +298,83 @@ const Dashboard = () => {
                     column={{ xxl: 3, xl: 2, lg: 2, md: 2, sm: 1, xs: 1 }}
                   >
                     <Descriptions.Item label="#المعرف">{record.guid || "-"}</Descriptions.Item>
-                    <Descriptions.Item label="الهاتف">{record.phone || "-"}</Descriptions.Item>
+                    {/* <Descriptions.Item label="الهاتف">{record.phone || "-"}</Descriptions.Item> */}
                     <Descriptions.Item label="العنوان">{record.address || "-"}</Descriptions.Item>
-                    <Descriptions.Item label="إسم المفوض">{record.authorized_name || "-"}</Descriptions.Item>
+                    {/* <Descriptions.Item label="إسم المفوض">{record.authorized_name || "-"}</Descriptions.Item> */}
                     <Descriptions.Item label="السمة التجارية">{record.brand || "-"}</Descriptions.Item>
                     <Descriptions.Item label="المحافضة">{record.governorate || "-"}</Descriptions.Item>
-                    <Descriptions.Item label="رقم المشغل المرخص">{record.license_number || "-"}</Descriptions.Item>
+                    {/* <Descriptions.Item label="رقم المشغل المرخص">{record.license_number || "-"}</Descriptions.Item> */}
                     <Descriptions.Item label="العضوية">{record.membership == "1" ? "هيئة عامة أساسية" : record.membership == "2" ? "مجلس إدارة" : record.membership == "3" ? "عضوية فخرية" : "-"}</Descriptions.Item>
                     <Descriptions.Item label="النوع">{record.type || "-"}</Descriptions.Item>
-                    <Descriptions.Item label="الحالة">{record.status ? <Badge status="success" text="فعالة" /> : <Badge status="error" text="غير فعالة" />}</Descriptions.Item>
+                    <Descriptions.Item label="الحالة" span={24}>{record.status ? <Badge status="success" text="فعالة" /> : <Badge status="error" text="غير فعالة" />}</Descriptions.Item>
+
+                    <Descriptions.Item label="مرفقات السجل التجاري" span={24}>
+                      <div className='flex flex-wrap gap-2 items-cente'>
+                        {
+                          record.cr_files?.map((file, i) => (
+                            <a key={i} href={file.url} target="_blank" rel="noreferrer" className='flex gap-1 items-center'>
+                              <span>{file.name}</span>
+                              <span className='w-[16px]'>
+                                <FileIcon extension={file.name.split('.')[file.name.split('.')?.length-1]} {...defaultStyles[file.name.split('.')[file.name.split('.').length-1]]} />
+                              </span>
+                            </a>
+                          ))
+                        }
+                      </div>
+                      {record.cr_files?.length === 0 ? <Typography.Text type='secondary' className='block text-center'>لا يوجد مرفقات</Typography.Text> : null}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="مرفقات رخصة الصناعة" span={24}>
+                      <div className='flex flex-wrap gap-2 items-cente'>
+                        {
+                          record.il_files?.map((file, i) => (
+                            <a key={i} href={file.url} target="_blank" rel="noreferrer" className='flex gap-1 items-center'>
+                              <span>{file.name}</span>
+                              <span className='w-[16px]'>
+                                <FileIcon extension={file.name.split('.')[file.name.split('.')?.length-1]} {...defaultStyles[file.name.split('.')[file.name.split('.').length-1]]} />
+                              </span>
+                            </a>
+                          ))
+                        }
+                      </div>
+                      {record.il_files?.length === 0 ? <Typography.Text type='secondary' className='block text-center'>لا يوجد مرفقات</Typography.Text> : null}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="مرفقات رخصة البلدية" span={24}>
+                      <div className='flex flex-wrap gap-2 items-cente'>
+                        {
+                          record.ml_files?.map((file, i) => (
+                            <a key={i} href={file.url} target="_blank" rel="noreferrer" className='flex gap-1 items-center'>
+                              <span>{file.name}</span>
+                              <span className='w-[16px]'>
+                                <FileIcon extension={file.name.split('.')[file.name.split('.')?.length-1]} {...defaultStyles[file.name.split('.')[file.name.split('.').length-1]]} />
+                              </span>
+                            </a>
+                          ))
+                        }
+                      </div>
+                      {record.ml_files?.length === 0 ? <Typography.Text type='secondary' className='block text-center'>لا يوجد مرفقات</Typography.Text> : null}
+                    </Descriptions.Item>
+
+
                   </Descriptions>
                   <Row gutter={[16, 16]}>
                     <Col xs={24} lg={12}>
                       <List
-                        header={<div>أسماء الأعضاء</div>}
+                        header={<div>الأعضاء ({record.members?.length || 0})</div>}
                         bordered
-                        dataSource={record.members.map((item) => item.full_name)}
-                        renderItem={(item) => <List.Item>{item}</List.Item>}
+                        dataSource={record?.members || []}
+                        renderItem={(item) => <List.Item>
+                          <Link to={`/members/${item._id}`} target='_blank'>{item.full_name}</Link>
+                        </List.Item>}
                       />
                     </Col>
                     <Col xs={24} lg={12}>
                       <List
-                        header={<div>أسماء العمال</div>}
+                        header={<div>العمال ({record.workers?.length || 0})</div>}
                         bordered
-                        dataSource={record.workers.map((item) => item.full_name)}
-                        renderItem={(item) => <List.Item>{item}</List.Item>}
-                        
+                        dataSource={record?.workers || []}
+                        renderItem={(item) => <List.Item>
+                          <Link to={`/workers/${item._id}`} target='_blank'>{item.full_name}</Link>
+                        </List.Item>}
                       />
                     </Col>
                   </Row>

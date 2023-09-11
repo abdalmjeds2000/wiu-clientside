@@ -7,7 +7,7 @@ import 'antd/dist/reset.css';
 import { useState } from 'react';
 import { MdOutlineColorLens } from 'react-icons/md';
 const colors = [
-  "#8D7B68",
+  "#609966",
   '#6528F7',
   '#F31559',
   '#35A29F',
@@ -24,6 +24,10 @@ const App = () => {
       theme={{
           token: {
             colorPrimary: appColor,
+            colorLink: appColor,
+            colorLinkHover: appColor,
+            colorLinkActive: "#000000",
+            linkHoverDecoration: 'underline',
             fontFamily: 'Alexandria, sans-serif',
             borderRadius: '4px',
           },

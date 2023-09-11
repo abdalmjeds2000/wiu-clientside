@@ -18,14 +18,14 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
     setLoading(true);
     const data = {
       ...values,
-      commercial_register_files: commercialRegisterFiles,
-      industry_license_files: industryLicenseFiles,
-      municipality_license_files: municipalityLicenseFiles,
+      cr_files: commercialRegisterFiles,
+      il_files: industryLicenseFiles,
+      ml_files: municipalityLicenseFiles,
     }
     // if any file status is uploading, return
-    if (data.commercial_register_files.some(file => file.status === 'uploading') ||
-      data.industry_license_files.some(file => file.status === 'uploading') ||
-      data.municipality_license_files.some(file => file.status === 'uploading')) 
+    if (data.cr_files.some(file => file.status === 'uploading') ||
+      data.il_files.some(file => file.status === 'uploading') ||
+      data.ml_files.some(file => file.status === 'uploading')) 
     {
       message.error('الرجاء انتظار رفع الملفات');
       return;
@@ -74,17 +74,17 @@ const NewCompanyForm = ({ onFinish, onFinishFailed }) => {
               <Form.Item name="membership_number" label="رقم العضوية" rules={[{ required: true, message: "" }]}>
                 <Input placeholder="أدخل رقم العضوية" size='large' />
               </Form.Item>
-              <Form.Item name="authorized_name" label="اسم المفوض" rules={[{ required: true, message: "" }]}>
+              {/* <Form.Item name="authorized_name" label="اسم المفوض" rules={[{ required: true, message: "" }]}>
                 <Input placeholder="أدخل اسم المفوض" size='large' />
-              </Form.Item>
-              <Form.Item name="workers_number" label="عدد العمال" rules={[{ required: true, message: "" }]}>
+              </Form.Item> */}
+              {/* <Form.Item name="workers_number" label="عدد العمال" rules={[{ required: true, message: "" }]}>
                 <InputNumber placeholder="أدخل عدد العمال" style={{ width: "100%" }} size='large' />
-              </Form.Item>
-            </Col>
-            <Col xs={24} lg={12}>
+              </Form.Item> */}
               <Form.Item name="address" label="العنوان" rules={[{ required: true, message: "" }]}>
                 <Input placeholder="أدخل العنوان" size='large' />
               </Form.Item>
+            </Col>
+            <Col xs={24} lg={12}>
               <Form.Item name="governorate" label="المحافظة" rules={[{ required: true, message: "" }]}>
                 <Select placeholder="اختر المحافظة" allowClear size='large'>
                   <Select.Option value="north_gaza">شمال غزة</Select.Option>
