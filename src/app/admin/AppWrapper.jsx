@@ -41,7 +41,7 @@ export const AppWrapper = () => {
                 nav.filter(r => r.isMenu)
                 .map(({ title, path, icon }, index) =>
                   <Menu.Item key={path} icon={icon}>
-                    <Link to={path}>{title}</Link>
+                    <Link to={path} onClick={() => setCollapsed(true)}>{title}</Link>
                   </Menu.Item>
                 )
               }

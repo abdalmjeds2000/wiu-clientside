@@ -8,8 +8,8 @@ export default {
     extend: {},
     colors: {
       primary: '#609966',
-      secondary: '#889EAF',
-      third: '#F3D5C0',
+      secondary: '#CCD5AE',
+      third: '#EDF1D6',
       ...require('tailwindcss/colors')
     }
   },

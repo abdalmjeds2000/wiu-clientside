@@ -17,7 +17,7 @@ const WorkerProfile = ({ worker }) => {
           <Avatar 
             icon={<UserOutlined className='text-7xl my-auto' />} 
             className="mx-auto absolute -top-10 transition duration-200 transform hover:scale-110" 
-            style={{ display: "flex", justifyContent: "center", backgroundColor: '#fde3cf', color: '#f56a00', width: "8rem", height: "8rem" }}
+            style={{ display: "flex", justifyContent: "center", backgroundColor: '#CCD5AE', color: '#609966', width: "8rem", height: "8rem" }}
           />
         </div>
         
